@@ -1,0 +1,4 @@
+storePassword=TU_CONTRASENA_SEGURA_AQUI
+keyPassword=TU_CONTRASENA_SEGURA_AQUI
+keyAlias=sagen
+storeFile=app/release.keystore

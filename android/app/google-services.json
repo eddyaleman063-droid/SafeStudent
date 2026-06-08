@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "583676030808",
+    "project_id": "sagen-bdd3f",
+    "storage_bucket": "sagen-bdd3f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583676030808:android:b9cfed0a6f9959b8107f2d",
+        "android_client_info": {
+          "package_name": "com.sagen.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583676030808-ks7ug6ggbum8n6btd7hhvic7o8122ksb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sagen.app",
+            "certificate_hash": "1d131ef89b7b2b3677ba2072d2a9db5193895266"
+          }
+        },
+        {
+          "client_id": "583676030808-flrddst6bb8n6ub6j0inof1iarbqpmu1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQdLxcrCNG0aWDbgrhEM6X6sPwgx6Pt7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583676030808-flrddst6bb8n6ub6j0inof1iarbqpmu1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
