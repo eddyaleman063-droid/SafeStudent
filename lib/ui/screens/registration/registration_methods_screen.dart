@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sagen/l10n/app_localizations.dart';
+import 'package:sagen/services/sage_emotion_service.dart';
 import 'package:sagen/ui/widgets/common/sage_emotion_widget.dart';
 
 class RegistrationMethodsScreen extends StatefulWidget {

@@ -3,7 +3,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../router/app_router.dart';
 import 'ad_manager_service.dart';
 import 'analytics_service.dart';
 import 'api_client.dart';
@@ -15,7 +14,6 @@ import 'content_loader.dart';
 import 'deep_link_service.dart';
 import 'device_tier.dart';
 import 'experience_service.dart';
-import 'motivational_quotes_service.dart';
 import 'notification_service.dart';
 import 'smart_cache.dart';
 import 'sync_queue_service.dart';
@@ -66,10 +64,7 @@ class AppInitializer {
       logger.error('SyncQueue init failed', e);
     }
     try {
-      await ApiClient.init(pinnedHosts: {
-        'generativelanguage.googleapis.com': const [],
-        'firestore.googleapis.com': const [],
-      });
+      await ApiClient.init();
     } catch (e) {
       logger.error('ApiClient init failed', e);
     }
@@ -95,7 +90,6 @@ class AppInitializer {
       logger.error('SmartCache init failed', e);
     }
     try {
-      NotificationService.instance.setNavigatorKey(rootNavigatorKey);
       await NotificationService.instance.init();
       await NotificationService.instance.scheduleChestReminder();
     } catch (e) {
@@ -112,7 +106,7 @@ class AppInitializer {
       logger.error('DeepLinkService init failed', e);
     }
     try {
-      await MotivationalQuotesService.instance.loadFromAsset();
+      // Quotes are built-in, no load needed
     } catch (e) {
       logger.error('Quotes init failed', e);
     }

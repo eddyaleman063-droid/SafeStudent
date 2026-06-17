@@ -79,6 +79,19 @@ class ExperienceService {
     HapticFeedback.heavyImpact();
   }
 
+  void chestEvolveHaptic() {
+    if (!_hapticEnabled) return;
+    HapticFeedback.heavyImpact();
+    Future.delayed(const Duration(milliseconds: 100), () {
+      HapticFeedback.mediumImpact();
+    });
+  }
+
+  void chestFailHaptic() {
+    if (!_hapticEnabled) return;
+    HapticFeedback.lightImpact();
+  }
+
   void chestOpenHaptic() {
     if (!_hapticEnabled) return;
     HapticFeedback.mediumImpact();

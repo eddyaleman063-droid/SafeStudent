@@ -53,7 +53,7 @@ class LearningState {
 
   double get overallProgress {
     if (stages.isEmpty) return 0;
-    final total = stages.fold<int>(0, (s, stage) => s + stage.sessions.fold<int>(0, (ss, ses) => ss + ses.lessons.length));
+    final total = stages.fold<int>(0, (s, stage) => s + stage.lessons.length);
     final done = stages.fold<int>(0, (s, stage) => s + stage.completedCount);
     if (total == 0) return 0;
     return done / total;

@@ -53,11 +53,6 @@ class ContentLoader {
       final list = jsonDecode(jsonStr) as List;
       final questions = list.map((e) => Challenge.fromJson(e as Map<String, dynamic>)).toList();
       _stageQuestions[stage.id] = questions;
-      for (final q in questions) {
-        if (q.lessonId.isNotEmpty) {
-          _lessonQuestions.putIfAbsent(q.lessonId, () => []).add(q);
-        }
-      }
     }
   }
 

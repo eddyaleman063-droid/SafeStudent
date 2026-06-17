@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/theme_constants.dart';
+import '../../../services/sage_emotion_service.dart';
 import '../../widgets/common/sage_emotion_widget.dart';
 
 class NotificationOptInScreen extends StatelessWidget {

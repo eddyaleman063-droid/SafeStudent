@@ -2270,12 +2270,6 @@ abstract class AppLocalizations {
   /// **'¡Ganaste {count} gemas!'**
   String rewardAdEarned(Object count);
 
-  /// No description provided for @rewardAdCooldown.
-  ///
-  /// In es, this message translates to:
-  /// **'Espera {seconds} segundos antes de ver otro anuncio.'**
-  String rewardAdCooldown(Object seconds);
-
   /// No description provided for @rewardAdNotAvailable.
   ///
   /// In es, this message translates to:
@@ -2815,6 +2809,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Anónimo'**
   String get profileDefaultLastName;
+
+  /// Registration method selection title
+  String get regMethodTitle;
+
+  /// Privacy policy link text
+  String get legalPrivacy;
+
+  /// Chest evolved to a new tier
+  String chestEvolvedTo(String type);
+
+  /// Chest evolution: no change
+  String get chestNoChange;
+
+  /// Hint to tap chest to upgrade
+  String get chestTapToUpgrade;
+
+  /// Reward ad cooldown message
+  String rewardAdCooldown(int seconds);
 }
 
 class _AppLocalizationsDelegate

@@ -1191,11 +1191,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String rewardAdCooldown(Object seconds) {
-    return 'Wait $seconds seconds before watching another ad.';
-  }
-
-  @override
   String get rewardAdNotAvailable =>
       'The ad is not available now. Try again later.';
 
@@ -1508,4 +1503,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileDefaultLastName => 'Anonymous';
+
+  @override
+  String get regMethodTitle => 'How do you want to sign up?';
+
+  @override
+  String get legalPrivacy => 'Privacy Policy';
+
+  @override
+  String chestEvolvedTo(String type) => 'Evolved to $type!';
+
+  @override
+  String get chestNoChange => 'No change';
+
+  @override
+  String get chestTapToUpgrade => 'Tap the chest to upgrade';
+
+  @override
+  String rewardAdCooldown(int seconds) => 'Wait ${seconds}s before next ad';
 }
