@@ -33,6 +33,6 @@ class AppConfig {
   /// Cambiar después de crear el proyecto en Vercel.
   static const String mercadopagoFunctionsUrl = String.fromEnvironment(
     'MP_FUNCTIONS_URL',
-    defaultValue: 'https://sagen-app.vercel.app',
+    defaultValue: 'https://sagen-vercel-api.vercel.app',
   );
 }
