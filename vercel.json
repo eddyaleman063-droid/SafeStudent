@@ -9,8 +9,4 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.js" }
   ],
-  "env": {
-    "MERCADOPAGO_ACCESS_TOKEN": "@mercadopago-access-token",
-    "FIREBASE_SERVICE_ACCOUNT_KEY": "@firebase-service-account-key"
-  }
 }
