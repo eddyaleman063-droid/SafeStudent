@@ -28,4 +28,11 @@ class AppConfig {
     'MERCADOPAGO_LINK',
     defaultValue: 'https://mpago.li/XXXXXXXXX',
   );
+
+  /// Base URL for Mercado Pago API (Vercel).
+  /// Cambiar después de crear el proyecto en Vercel.
+  static const String mercadopagoFunctionsUrl = String.fromEnvironment(
+    'MP_FUNCTIONS_URL',
+    defaultValue: 'https://sagen-app.vercel.app',
+  );
 }

@@ -125,7 +125,6 @@ class SageEmotionService {
   Future<void> _precache(SageEmotion emotion) async {
     if (_precached.contains(emotion)) return;
     final provider = AssetImage(emotion.assetPath);
-    await provider.evict();
     final stream = provider.resolve(ImageConfiguration.empty);
     final completer = Completer<void>();
     final listener = ImageStreamListener(
@@ -245,6 +244,16 @@ class SageEmotionService {
     };
     if (negativeSet.contains(old) && negativeSet.contains(next)) return false;
     return true;
+  }
+
+  bool isSignificantMoodShift(SageEmotion old, SageEmotion next) {
+    final intense = {
+      SageEmotion.furious, SageEmotion.aggressive, SageEmotion.crying,
+      SageEmotion.depressed, SageEmotion.dead, SageEmotion.shocked,
+      SageEmotion.angry, SageEmotion.scared, SageEmotion.distressed,
+      SageEmotion.knockedOut,
+    };
+    return intense.contains(old) || intense.contains(next);
   }
 
   bool canIdleBreathe(SageEmotion emotion) {

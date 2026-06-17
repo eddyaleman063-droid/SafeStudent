@@ -1,0 +1,10 @@
+{
+  "name": "sagen-api",
+  "version": "1.0.0",
+  "description": "SAGEN Mercado Pago API for Vercel",
+  "dependencies": {
+    "express": "^4.21.0",
+    "firebase-admin": "^12.0.0",
+    "mercadopago": "^2.3.0"
+  }
+}

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/learning/stage.dart';
+import '../services/app_logger.dart';
 import '../services/cloud_sync_service.dart';
 import '../services/learning_stage_service.dart';
+
+const _checksumSalt = 'sagen_v5_integrity';
 
 abstract class LearningRepository {
   List<Stage> get stages;
@@ -24,6 +27,7 @@ abstract class LearningRepository {
   void saveAchievements(List<String> achievements);
   void saveTotalXp(int amount);
   void saveTotalGems(int amount);
+  void saveIntegrity();
   bool spendGems(int amount);
   void addGems(int amount, {bool trackTotal = true});
   void addXp(int amount, {bool trackTotal = true});
@@ -43,8 +47,38 @@ class LearningRepositoryImpl implements LearningRepository {
   int _totalXpEarned = 0;
   int _totalGemsEarned = 0;
 
-  LearningRepositoryImpl(this._prefs, this._cloudSync, [LearningStageService? stageService])
-    : _stageService = stageService ?? const LearningStageService();
+  LearningRepositoryImpl(
+    this._prefs,
+    this._cloudSync, [
+    LearningStageService? stageService,
+  ]) : _stageService = stageService ?? const LearningStageService();
+
+  int _computeChecksum() => Object.hashAll([
+    _gems,
+    _xp,
+    _totalGemsEarned,
+    _totalXpEarned,
+    _lessonsCompleted,
+    _currentLevel,
+    _checksumSalt,
+  ]);
+
+  void _saveChecksum() {
+    _prefs.setInt('learning_integrity', _computeChecksum());
+  }
+
+  bool _verifyChecksum() {
+    final stored = _prefs.getInt('learning_integrity');
+    if (stored == null) return true; // first run, nothing to verify
+    final expected = _computeChecksum();
+    if (stored != expected) {
+      AppLogger().warning(
+        'Integrity check failed: stored=$stored expected=$expected',
+      );
+      return false;
+    }
+    return true;
+  }
 
   @override
   int get gems => _gems;
@@ -78,6 +112,16 @@ class LearningRepositoryImpl implements LearningRepository {
     _lessonsCompleted = _prefs.getInt('learning_lessons_completed') ?? 0;
     _totalXpEarned = _prefs.getInt('learning_total_xp') ?? 0;
     _totalGemsEarned = _prefs.getInt('learning_total_gems') ?? 0;
+
+    if (!_verifyChecksum()) {
+      AppLogger().warning('Integrity check failed — resetting economic values');
+      _gems = 0;
+      _xp = 0;
+      _currentLevel = 1;
+      _totalXpEarned = 0;
+      _totalGemsEarned = 0;
+      _lessonsCompleted = 0;
+    }
 
     final raw = _prefs.getString('learning_stages');
     if (raw != null && raw.isNotEmpty) {
@@ -120,7 +164,9 @@ class LearningRepositoryImpl implements LearningRepository {
       ..clear()
       ..addAll(stages);
     _prefs.setString(
-        'learning_stages', jsonEncode(stages.map((s) => s.toJson()).toList()));
+      'learning_stages',
+      jsonEncode(stages.map((s) => s.toJson()).toList()),
+    );
   }
 
   @override
@@ -170,6 +216,11 @@ class LearningRepositoryImpl implements LearningRepository {
     _totalGemsEarned = amount;
     _prefs.setInt('learning_total_gems', amount);
     _notifyFieldChanged('learning_total_gems', amount);
+  }
+
+  @override
+  void saveIntegrity() {
+    _saveChecksum();
   }
 
   @override

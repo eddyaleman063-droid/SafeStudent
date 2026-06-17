@@ -6,13 +6,11 @@ import '../../../services/sage_emotion_service.dart';
 class WizardSageSection extends StatelessWidget {
   final SageEmotion emotion;
   final String message;
-  final bool isDark;
 
   const WizardSageSection({
     super.key,
     required this.emotion,
     required this.message,
-    required this.isDark,
   });
 
   @override
@@ -35,7 +33,7 @@ class WizardSageSection extends StatelessWidget {
               message,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF1A1A2E).withValues(alpha: 0.9),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
                 height: 1.3,
               ),
             ),
@@ -48,9 +46,8 @@ class WizardSageSection extends StatelessWidget {
 
 class WizardSageBubble extends StatelessWidget {
   final String message;
-  final bool isDark;
 
-  const WizardSageBubble({super.key, required this.message, required this.isDark});
+  const WizardSageBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +74,7 @@ class WizardSageBubble extends StatelessWidget {
               message,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF1A1A2E).withValues(alpha: 0.9),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
                 height: 1.4,
                 fontStyle: FontStyle.italic,
               ),

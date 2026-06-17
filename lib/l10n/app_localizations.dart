@@ -2270,6 +2270,12 @@ abstract class AppLocalizations {
   /// **'¡Ganaste {count} gemas!'**
   String rewardAdEarned(Object count);
 
+  /// No description provided for @rewardAdCooldown.
+  ///
+  /// In es, this message translates to:
+  /// **'Espera {seconds} segundos antes de ver otro anuncio.'**
+  String rewardAdCooldown(Object seconds);
+
   /// No description provided for @rewardAdNotAvailable.
   ///
   /// In es, this message translates to:

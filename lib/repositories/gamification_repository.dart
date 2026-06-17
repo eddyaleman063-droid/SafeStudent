@@ -26,23 +26,17 @@ class GamificationRepository {
   /// Whether the user can claim a chest right now
   bool get canClaimDailyChest {
     final lastClaimDate = _prefs.getString(_keyLastClaim) ?? '';
-    // Anti-cheat: future date detected → cannot claim
     if (lastClaimDate.isNotEmpty && lastClaimDate.compareTo(_today()) > 0) {
       return false;
     }
-    if (lastClaimDate != _today()) {
-      // New day — generate a new chest
-      _prefs.setBool(_keyUnclaimedChest, true);
-      _prefs.setString(_keyLastClaim, _today());
-      return true;
-    }
+    if (lastClaimDate != _today()) return true;
     return _prefs.getBool(_keyUnclaimedChest) ?? false;
   }
 
   /// Claim the daily chest. Returns the gem reward (2).
   /// Resets the unclaimed flag. Performs anti-cheat check.
   int claimDailyChest() {
-    // Anti-cheat: check before canClaimDailyChest resets dates
+    // Anti-cheat: check date before any mutations
     final storedDate = _prefs.getString(_keyLastClaim) ?? '';
     if (storedDate.isNotEmpty && storedDate.compareTo(_today()) > 0) {
       _prefs.setBool(_keyUnclaimedChest, false);
@@ -51,7 +45,14 @@ class GamificationRepository {
         message: 'Se detectó manipulación del reloj. No es posible reclamar el cofre.',
       );
     }
-    if (!canClaimDailyChest) {
+
+    // Handle new day
+    if (storedDate != _today()) {
+      _prefs.setBool(_keyUnclaimedChest, true);
+      _prefs.setString(_keyLastClaim, _today());
+    }
+
+    if (!_prefs.getBool(_keyUnclaimedChest)!) {
       throw StateError('No chest available to claim today');
     }
 

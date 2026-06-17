@@ -60,15 +60,17 @@ class VoiceService {
       onResult: (SpeechRecognitionResult result) {
         _lastWords = result.recognizedWords;
         onResult(_lastWords);
-        if (result.finalResult
-            && _resultCompleter != null
-            && !_resultCompleter!.isCompleted) {
+        if (result.finalResult &&
+            _resultCompleter != null &&
+            !_resultCompleter!.isCompleted) {
           _resultCompleter!.complete();
         }
       },
-      localeId: _locale,
-      listenOptions: SpeechListenOptions(cancelOnError: true),
-      listenFor: const Duration(seconds: 15),
+      listenOptions: SpeechListenOptions(
+        cancelOnError: true,
+        localeId: _locale,
+        listenFor: const Duration(seconds: 15),
+      ),
     );
 
     _state = VoiceState.processing;

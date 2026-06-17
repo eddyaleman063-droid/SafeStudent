@@ -115,12 +115,11 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
         body: SafeArea(
           child: Column(
             children: [
-              WizardTopBar(currentIndex: state.currentIndex, onBack: _goBack, isDark: _isDark),
+              WizardTopBar(currentIndex: state.currentIndex, onBack: _goBack),
               WizardSageSection(
                 key: ValueKey('sage_${state.currentIndex}_${state.sectionData.hashCode}'),
                 emotion: config.emotion,
                 message: _sageMessageForStep(state.currentIndex, state, _l),
-                isDark: _isDark,
               ),
               Expanded(
                 child: PageView.builder(
@@ -133,7 +132,6 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
               WizardBottomBar(
                 currentIndex: state.currentIndex,
                 canContinue: canContinue,
-                isDark: _isDark,
                 onNext: _goNext,
                 onComplete: _completeWizard,
               ),
@@ -709,7 +707,6 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
           const SizedBox(height: AppSpacing.sm),
           WizardSageBubble(
             message: sageMsg,
-            isDark: _isDark,
           ),
           const SizedBox(height: AppSpacing.xl),
           Text(
@@ -769,16 +766,16 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            WizardSummaryRow(label: _l.summaryOrigin, value: referral, isDark: _isDark),
-            WizardSummaryRow(label: _l.summaryKnowledge, value: knowledge, isDark: _isDark),
-            WizardSummaryRow(label: _l.summaryInterest, value: interest, isDark: _isDark),
+            WizardSummaryRow(label: _l.summaryOrigin, value: referral),
+            WizardSummaryRow(label: _l.summaryKnowledge, value: knowledge),
+            WizardSummaryRow(label: _l.summaryInterest, value: interest),
             if (reasons.isNotEmpty)
-              WizardSummaryRow(label: _l.summaryMotivations, value: reasons.join(', '), isDark: _isDark),
+              WizardSummaryRow(label: _l.summaryMotivations, value: reasons.join(', ')),
             if (habits.isNotEmpty)
-              WizardSummaryRow(label: _l.summaryLearning, value: habits.join(', '), isDark: _isDark),
-            WizardSummaryRow(label: _l.summaryDailyGoal, value: '$goal min', isDark: _isDark),
+              WizardSummaryRow(label: _l.summaryLearning, value: habits.join(', ')),
+            WizardSummaryRow(label: _l.summaryDailyGoal, value: '$goal min'),
             if (commitments.isNotEmpty)
-              WizardSummaryRow(label: _l.summaryCommitment, value: _l.commitDays(commitments.length), isDark: _isDark),
+              WizardSummaryRow(label: _l.summaryCommitment, value: _l.commitDays(commitments.length)),
             const SizedBox(height: AppSpacing.xl),
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),

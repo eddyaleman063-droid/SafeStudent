@@ -9,7 +9,6 @@ import 'package:sagen/services/experience_service.dart';
 class WizardBottomBar extends ConsumerWidget {
   final int currentIndex;
   final bool canContinue;
-  final bool isDark;
   final VoidCallback onNext;
   final VoidCallback onComplete;
 
@@ -17,7 +16,6 @@ class WizardBottomBar extends ConsumerWidget {
     super.key,
     required this.currentIndex,
     required this.canContinue,
-    required this.isDark,
     required this.onNext,
     required this.onComplete,
   });
@@ -26,6 +24,7 @@ class WizardBottomBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final exp = ExperienceService.instance;
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
@@ -36,14 +35,12 @@ class WizardBottomBar extends ConsumerWidget {
             WizardButton(
               label: l.startText,
               enabled: true,
-              isDark: isDark,
               onPressed: onNext,
             )
           else if (currentIndex == OnboardingWizardConfig.totalSteps - 1) ...[
             WizardButton(
               label: l.onboardingCommitButton,
               enabled: canContinue,
-              isDark: isDark,
               onPressed: onComplete,
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -56,7 +53,7 @@ class WizardBottomBar extends ConsumerWidget {
                 l.onboardingHaveAccount,
                 style: TextStyle(
                   fontSize: 12,
-                  color: isDark ? Colors.white.withValues(alpha: 0.35) : const Color(0xFF1A1A2E).withValues(alpha: 0.35),
+                  color: cs.onSurface.withValues(alpha: 0.35),
                 ),
               ),
             ),
@@ -64,7 +61,6 @@ class WizardBottomBar extends ConsumerWidget {
             WizardButton(
               label: l.continueText,
               enabled: canContinue,
-              isDark: isDark,
               onPressed: onNext,
             ),
         ],
@@ -76,14 +72,12 @@ class WizardBottomBar extends ConsumerWidget {
 class WizardButton extends StatefulWidget {
   final String label;
   final bool enabled;
-  final bool isDark;
   final VoidCallback onPressed;
 
   const WizardButton({
     super.key,
     required this.label,
     required this.enabled,
-    required this.isDark,
     required this.onPressed,
   });
 
@@ -117,6 +111,7 @@ class _WizardButtonState extends State<WizardButton> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final exp = ExperienceService.instance;
+    final cs = Theme.of(context).colorScheme;
     return AnimatedBuilder(
       animation: _shimmerAnim,
       builder: (context, _) {
@@ -139,7 +134,7 @@ class _WizardButtonState extends State<WizardButton> with SingleTickerProviderSt
                     end: Alignment(_shimmerAnim.value + 1, 0),
                   )
                 : null,
-            color: widget.enabled ? null : (widget.isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.06)),
+            color: widget.enabled ? null : cs.outlineVariant.withValues(alpha: 0.3),
             boxShadow: widget.enabled && !exp.reduceShadows
                 ? [
                     BoxShadow(
@@ -168,7 +163,7 @@ class _WizardButtonState extends State<WizardButton> with SingleTickerProviderSt
                     fontWeight: FontWeight.bold,
                     color: widget.enabled
                         ? Colors.white
-                        : (widget.isDark ? Colors.white.withValues(alpha: 0.25) : Colors.black.withValues(alpha: 0.25)),
+                        : cs.onSurface.withValues(alpha: 0.25),
                   ),
                   child: Text(widget.label),
                 ),

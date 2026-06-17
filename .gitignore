@@ -50,6 +50,13 @@ android/key.properties
 
 # Environment variables / API keys
 .env
+.env.local
+
+# Vercel API
+node_modules/
+package-lock.json
+.vercel/
+api/package-lock.json
 
 # APK builds
 *.apk

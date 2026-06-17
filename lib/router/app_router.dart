@@ -18,6 +18,8 @@ import '../models/learning/quiz_score.dart';
 import '../ui/screens/lesson/session_summary_screen.dart';
 import '../ui/screens/lesson/habit_transition_screen.dart';
 import '../ui/screens/streak/daily_streak_screen.dart';
+import '../ui/screens/payment/payment_success_screen.dart';
+import '../ui/screens/payment/payment_failed_screen.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -38,6 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         final publicRoutes = <String>{
           '/', '/welcome', '/login', '/forgot-password',
           '/onboarding', '/onboarding/flow',
+          '/payment/success', '/payment/failure', '/payment/pending',
         };
         if (!publicRoutes.contains(location)) return '/welcome';
         return null;
@@ -146,6 +149,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'profile',
         builder: (context, state) => UserProfileScreen(
           uid: state.pathParameters['uid']!,
+        ),
+      ),
+      GoRoute(
+        path: '/payment/success',
+        name: 'payment-success',
+        builder: (context, state) {
+          final gemsParam = state.uri.queryParameters['gems'];
+          final gems = int.tryParse(gemsParam ?? '') ?? 0;
+          return PaymentSuccessScreen(gems: gems);
+        },
+      ),
+      GoRoute(
+        path: '/payment/failure',
+        name: 'payment-failure',
+        builder: (context, state) {
+          final error = state.uri.queryParameters['error'];
+          return PaymentFailedScreen(error: error);
+        },
+      ),
+      GoRoute(
+        path: '/payment/pending',
+        name: 'payment-pending',
+        builder: (context, state) => const PaymentFailedScreen(
+          error: 'El pago está pendiente. Recibirás las gemas cuando se confirme.',
         ),
       ),
     ],

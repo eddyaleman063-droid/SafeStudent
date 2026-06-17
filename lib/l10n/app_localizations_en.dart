@@ -1191,6 +1191,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String rewardAdCooldown(Object seconds) {
+    return 'Wait $seconds seconds before watching another ad.';
+  }
+
+  @override
   String get rewardAdNotAvailable =>
       'The ad is not available now. Try again later.';
 

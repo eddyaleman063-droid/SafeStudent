@@ -6,6 +6,7 @@ import '../models/chest_type.dart';
 import '../models/daily_mission.dart';
 import '../services/chest_event_bus.dart';
 import '../services/storage_service.dart';
+import 'learning_provider.dart';
 import 'prefs_provider.dart';
 
 class MissionState {
@@ -293,6 +294,8 @@ class MissionNotifier extends Notifier<MissionState> {
 
     if (chestType != null) {
       final reward = ChestRewardRoller.roll(chestType);
+      ref.read(learningProvider.notifier).addGems(reward.gems);
+      ref.read(learningProvider.notifier).addXp(reward.xp);
       ChestEventBus.instance.fire(ChestRewardData(
         type: chestType,
         xp: reward.xp,

@@ -7,6 +7,7 @@ import '../services/streak_service.dart';
 import '../models/chest_type.dart';
 import '../models/chest_reward.dart';
 import '../services/chest_event_bus.dart';
+import 'learning_provider.dart';
 import 'service_providers.dart';
 
 class StreakState {
@@ -340,6 +341,9 @@ class StreakNotifier extends Notifier<StreakState> {
       final baseGems = newStreak >= 100 ? 30 : (newStreak >= 30 ? 20 : (newStreak >= 14 ? 10 : 5));
 
       final reward = ChestRewardRoller.roll(t, overrideXp: baseXp, overrideGems: baseGems);
+
+      ref.read(learningProvider.notifier).addGems(reward.gems);
+      ref.read(learningProvider.notifier).addXp(reward.xp);
 
       ChestEventBus.instance.fire(ChestRewardData(
         type: t,

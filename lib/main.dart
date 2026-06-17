@@ -227,6 +227,12 @@ class _SagenAppState extends ConsumerState<SagenApp> with WidgetsBindingObserver
         DeepLinkService.instance.requestTabSwitch(3);
       case LessonDeepLink():
         router.goNamed('lessons');
+      case PaymentSuccessDeepLink():
+        router.goNamed('payment-success');
+      case PaymentFailureDeepLink():
+        router.goNamed('payment-failure');
+      case PaymentPendingDeepLink():
+        router.goNamed('payment-pending');
       case UnknownDeepLink():
         break;
     }

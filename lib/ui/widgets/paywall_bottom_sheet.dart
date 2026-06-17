@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sagen/config/app_config.dart';
 import 'package:sagen/core/theme/theme_constants.dart';
 import 'package:sagen/l10n/app_localizations.dart';
+import 'package:sagen/providers/payment_provider.dart';
 import 'package:sagen/ui/widgets/common/sagen_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Payment packages in local currency (PEN/Soles)
 class GemPackage {
   final int gems;
   final double price;
@@ -35,10 +35,7 @@ class PaywallBottomSheet extends ConsumerWidget {
 
   const PaywallBottomSheet({super.key, this.userId});
 
-  /// ─── CONFIGURATION ───
-  /// Reemplaza estos valores por tu número de WhatsApp y/o link de MercadoPago.
-  /// El link de MercadoPago está centralizado en [AppConfig.mercadopagoLink].
-  static const String _whatsAppNumber = '51934890627'; // <-- NÚMERO REAL
+  static const String _whatsAppNumber = '51934890627';
 
   static Future<void> show(BuildContext context, {String? userId}) {
     return showModalBottomSheet(
@@ -70,10 +67,41 @@ class PaywallBottomSheet extends ConsumerWidget {
     }
   }
 
+  Future<void> _processMpPayment(BuildContext context, WidgetRef ref, GemPackage pkg) async {
+    final l = AppLocalizations.of(context)!;
+    final initPoint = await ref.read(paymentProvider.notifier).initiateMercadoPago(
+      gems: pkg.gems,
+      price: pkg.price,
+    );
+
+    if (initPoint == null) {
+      if (context.mounted) {
+        SagenNotification.show(
+          context,
+          message: 'Error al conectar con Mercado Pago. Intenta de nuevo.',
+          type: NotificationType.error,
+        );
+      }
+      return;
+    }
+
+    try {
+      await launchUrl(Uri.parse(initPoint), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (context.mounted) {
+        SagenNotification.show(
+          context,
+          message: l.paywallWhatsAppError(AppConfig.mercadopagoLink),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context)!;
     final dark = Theme.of(context).brightness == Brightness.dark;
+    final paymentState = ref.watch(paymentProvider);
 
     return Container(
       decoration: BoxDecoration(
@@ -115,10 +143,40 @@ class PaywallBottomSheet extends ConsumerWidget {
           const SizedBox(height: AppSpacing.xl),
           ...gemPackages.map((pkg) => Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: _PackageCard(
-              pkg: pkg,
-              dark: dark,
-              onTap: () => _processLocalPayment(context, pkg, userId),
+            child: Column(
+              children: [
+                _PackageCard(
+                  pkg: pkg,
+                  dark: dark,
+                  onTap: () => _processLocalPayment(context, pkg, userId),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton.icon(
+                    onPressed: paymentState.status == PaymentStatus.creatingPreference
+                        ? null
+                        : () => _processMpPayment(context, ref, pkg),
+                    icon: paymentState.status == PaymentStatus.creatingPreference
+                        ? const SizedBox(
+                            width: 16, height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.payment_rounded, size: 18),
+                    label: Text(
+                      'Mercado Pago',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: dark ? Colors.cyanAccent : const Color(0xFF009EE3),
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: dark ? Colors.cyanAccent : const Color(0xFF009EE3),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                    ),
+                  ),
+                ),
+              ],
             ),
           )),
           const SizedBox(height: AppSpacing.md),

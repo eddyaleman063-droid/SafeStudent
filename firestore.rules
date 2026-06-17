@@ -38,5 +38,34 @@ service cloud.firestore {
     // Rate limiting note:
     // Consider adding Firebase App Check enforcement in production
     // to prevent abuse from unverified clients.
+
+    // Transaction logs — users can write their own
+    match /transaction_logs/{logId} {
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+    }
+
+    // Pending payments — users can register their own
+    match /pending_payments/{paymentId} {
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null
+                  && (resource.data.userId == request.auth.uid
+                      || get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists);
+    }
+
+    // Payment logs — only server functions (admin SDK)
+    match /payment_logs/{paymentId} {
+      allow read, write: if false;
+    }
+
+    // Admins collection — only server access
+    match /admins/{adminId} {
+      allow read: if request.auth != null
+                  && request.auth.uid == adminId;
+      allow write: if false;
+    }
   }
 }

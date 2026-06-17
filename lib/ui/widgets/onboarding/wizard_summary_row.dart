@@ -4,17 +4,16 @@ import '../../../core/theme/theme_constants.dart';
 class WizardSummaryRow extends StatelessWidget {
   final String label;
   final String value;
-  final bool isDark;
 
   const WizardSummaryRow({
     super.key,
     required this.label,
     required this.value,
-    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
@@ -27,7 +26,7 @@ class WizardSummaryRow extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white.withValues(alpha: 0.5) : const Color(0xFF1A1A2E).withValues(alpha: 0.5),
+                color: cs.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -36,7 +35,7 @@ class WizardSummaryRow extends StatelessWidget {
               value,
               style: TextStyle(
                 fontSize: 13,
-                color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF1A1A2E).withValues(alpha: 0.9),
+                color: cs.onSurface.withValues(alpha: 0.9),
                 height: 1.3,
               ),
             ),

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="sagen_primary">#1565C0</color>
-	<color name="ic_launcher_background">#0D47A1</color>
+    <color name="ic_launcher_background">#0D47A1</color>
+    <color name="ic_launcher_bg_sage_default">#0D47A1</color>
+    <color name="ic_launcher_bg_sage_golden">#F9A825</color>
+    <color name="ic_launcher_bg_sage_onfire">#D32F2F</color>
+    <color name="ic_launcher_bg_sage_frozen">#0288D1</color>
+    <color name="ic_launcher_bg_sage_crying">#7B1FA2</color>
+    <color name="ic_launcher_bg_sage_furious">#C62828</color>
+    <color name="ic_launcher_bg_sage_annoyed">#E65100</color>
+    <color name="ic_launcher_bg_sage_curious">#388E3C</color>
+    <color name="ic_launcher_bg_sage_sleeping">#546E7A</color>
 </resources>

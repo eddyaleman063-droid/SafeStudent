@@ -20,6 +20,19 @@ class LessonDeepLink extends DeepLinkAction {
   const LessonDeepLink(this.stageId);
 }
 
+class PaymentSuccessDeepLink extends DeepLinkAction {
+  final String? externalRef;
+  const PaymentSuccessDeepLink([this.externalRef]);
+}
+
+class PaymentFailureDeepLink extends DeepLinkAction {
+  const PaymentFailureDeepLink();
+}
+
+class PaymentPendingDeepLink extends DeepLinkAction {
+  const PaymentPendingDeepLink();
+}
+
 class UnknownDeepLink extends DeepLinkAction {
   final Uri uri;
   const UnknownDeepLink(this.uri);
@@ -62,6 +75,7 @@ class DeepLinkService {
 
   DeepLinkAction handleDeepLink(Uri uri) {
     final host = uri.host.toLowerCase();
+    final path = uri.path.toLowerCase();
     final params = uri.queryParameters;
 
     switch (host) {
@@ -83,6 +97,19 @@ class DeepLinkService {
         }
         _logger.warning('DeepLink /lesson missing stageId');
         return UnknownDeepLink(uri);
+
+      case 'payment':
+        switch (path) {
+          case '/success':
+            return PaymentSuccessDeepLink(params['external_ref']);
+          case '/failure':
+            return const PaymentFailureDeepLink();
+          case '/pending':
+            return const PaymentPendingDeepLink();
+          default:
+            _logger.warning('DeepLink /payment unknown path: $path');
+            return UnknownDeepLink(uri);
+        }
 
       default:
         _logger.warning('DeepLink unknown host: $host');

@@ -31,9 +31,9 @@ class CloudSyncService {
 
   static const Map<String, String> _spToFirestore = {
     'learning_gems': 'gemsBalance',
-    'learning_xp': 'totalXp',
-    'learning_total_gems': 'gemsBalance',
-    'learning_total_xp': 'totalXp',
+    'learning_xp': 'xpBalance',
+    'learning_total_gems': 'totalGemsEarned',
+    'learning_total_xp': 'totalXpEarned',
     'learning_level': 'level',
     'learning_lessons_completed': 'lessonsCompleted',
     'streak_current': 'currentStreak',
@@ -69,8 +69,7 @@ class CloudSyncService {
         .snapshots()
         .listen(
           (snapshot) => _onSnapshot(snapshot, prefs),
-          onError: (e) =>
-              _logger.error('CloudSync: snapshot error: $e'),
+          onError: (e) => _logger.error('CloudSync: snapshot error: $e'),
         );
     _logger.info('CloudSync: listening to user $uid');
   }
@@ -91,7 +90,9 @@ class CloudSyncService {
   }
 
   Future<void> _applyDocumentData(
-      Map<String, dynamic> data, SharedPreferences prefs) async {
+    Map<String, dynamic> data,
+    SharedPreferences prefs,
+  ) async {
     for (final entry in data.entries) {
       if (entry.key.startsWith('_')) continue;
       try {
@@ -111,6 +112,8 @@ class CloudSyncService {
         }
       } catch (_) {}
     }
+    // Invalidate local integrity check after cloud restore
+    await prefs.remove('learning_integrity');
   }
 
   @pragma('vm:entry-point')
@@ -157,49 +160,62 @@ class CloudSyncService {
   Future<bool> saveAll(String uid, SharedPreferences prefs) async {
     if (!_initialized) return false;
 
-    try {
-      _isSyncing = true;
-      final data = <String, dynamic>{};
-      for (final key in _keysToSync) {
-        final val = _getPrefValue(prefs, key);
-        if (val != null) data[key] = val;
-      }
-      data['_last_sync'] = FieldValue.serverTimestamp();
+    for (int attempt = 0; attempt < 3; attempt++) {
+      try {
+        _isSyncing = true;
+        final data = <String, dynamic>{};
+        for (final key in _keysToSync) {
+          final val = _getPrefValue(prefs, key);
+          if (val != null) data[key] = val;
+        }
+        data['_last_sync'] = FieldValue.serverTimestamp();
 
-      await _firestore.collection('users').doc(uid).set(data, SetOptions(merge: true));
-      await prefs.setString(_lastSyncKey, DateTime.now().toIso8601String());
-      _lastSync = DateTime.now();
-      _logger.info('CloudSync: saved ${data.length} keys for $uid');
-      return true;
-    } catch (e) {
-      _logger.error('CloudSync: saveAll failed: $e');
-      return false;
-    } finally {
-      _isSyncing = false;
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .set(data, SetOptions(merge: true));
+        await prefs.setString(_lastSyncKey, DateTime.now().toIso8601String());
+        _lastSync = DateTime.now();
+        _logger.info('CloudSync: saved ${data.length} keys for $uid');
+        return true;
+      } catch (e) {
+        _logger.error('CloudSync: saveAll attempt $attempt failed: $e');
+        if (attempt < 2) {
+          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+        }
+      } finally {
+        _isSyncing = false;
+      }
     }
+    return false;
   }
 
   Future<bool> loadAll(String uid, SharedPreferences prefs) async {
     if (!_initialized) return false;
 
-    try {
-      _isSyncing = true;
-      final doc = await _firestore.collection('users').doc(uid).get();
-      if (!doc.exists) {
-        _logger.info('CloudSync: no cloud data for $uid');
-        return false;
-      }
+    for (int attempt = 0; attempt < 3; attempt++) {
+      try {
+        _isSyncing = true;
+        final doc = await _firestore.collection('users').doc(uid).get();
+        if (!doc.exists) {
+          _logger.info('CloudSync: no cloud data for $uid');
+          return false;
+        }
 
-      final data = doc.data()!;
-      await _applyDocumentData(data, prefs);
-      _logger.info('CloudSync: loaded ${data.length} keys for $uid');
-      return true;
-    } catch (e) {
-      _logger.error('CloudSync: loadAll failed: $e');
-      return false;
-    } finally {
-      _isSyncing = false;
+        final data = doc.data()!;
+        await _applyDocumentData(data, prefs);
+        _logger.info('CloudSync: loaded ${data.length} keys for $uid');
+        return true;
+      } catch (e) {
+        _logger.error('CloudSync: loadAll attempt $attempt failed: $e');
+        if (attempt < 2) {
+          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+        }
+      } finally {
+        _isSyncing = false;
+      }
     }
+    return false;
   }
 
   Future<void> clearLocal(SharedPreferences prefs) async {
